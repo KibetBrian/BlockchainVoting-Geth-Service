@@ -7,6 +7,10 @@ import (
 	"math/big"
 )
 
+func init(){
+	ConfigureEnv()
+}
+
 type Error struct{
 	message string
 	err error
