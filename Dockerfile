@@ -1,11 +1,7 @@
-FROM golang:1.18-alpine3.15 as builder
+FROM golang:1.18-alpine3.15
 WORKDIR /app
 COPY . .
 RUN go mod download
-RUN go build -o main main.go
-
-FROM golang:1.18-alpine3.15
-WORKDIR /app
-COPY --from=builder /main .
-EXPOSE 8000
-ENTRYPOINT [./app/main]
+RUN apk add build-base
+RUN GOOS=linux go build -o /main
+CMD ["/main"]
