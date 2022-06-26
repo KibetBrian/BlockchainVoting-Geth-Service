@@ -87,6 +87,7 @@ type TransactionResult struct {
 }
 
 func AddVoter(address string) TransactionResult{
+	Refresh()
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
 		log.Fatalf("Failed to create election instance: %v\n", err)
