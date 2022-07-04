@@ -7,5 +7,5 @@ import (
 
 func main() {
 	server := api.NewServer()
-	server.Start("127.0.0.1:8000")
+	server.Start(":8000")
 }
