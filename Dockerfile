@@ -4,4 +4,5 @@ COPY . .
 RUN go mod download
 RUN apk add build-base
 RUN GOOS=linux go build -o /main
+EXPOSE 8000
 CMD ["/main"]
