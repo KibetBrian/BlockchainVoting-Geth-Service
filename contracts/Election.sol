@@ -1,93 +1,156 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.13;
 
-
 contract Election{
+
     address admin;
+    bool registrationPhase = false;
+    bool votingPhase = false;
 
     //Candidate data structures
-    mapping(address=>Vote[]) public candidates;
-    Candidate[] candidatesArray;
-    uint candidateCounts;
+    mapping(address=> Candidate) candidate;
+    Candidate[] governorCandidates;
+    Candidate[] presidentCandidates;
 
     //Voter data stuctures
-    mapping(address=>uint) voters;
-    Voter[] votersArray;
-    uint votersCount;
+    mapping(address=>Voter) voters;
+    Voter[] allVoters;
 
-    uint count = 0;
+    //Votes
+    address[] presidentVotes;
+    address[] governorVotes;
 
-
-    struct Voter{
-        address addr;
+    struct Voter {
+        address voter;
+        address president;
+        address governor;
+        bool votedPresident;
+        bool votedGovernor;
+        bool registered;
     }
 
     struct Candidate{
         string name;
         address addr;
-    }
-    
-    struct Vote {
-        address addr;
+        string position;
+        uint votes;
     }
 
     constructor(){
         admin = msg.sender;
     }
+
     modifier onlyAdmin(){
         require(msg.sender==admin, "Only admins are permitted to do this");
         _;
     }
 
-    function CastVote(address _address) public returns (bool) {
-        for (uint i=0; i<candidatesArray.length; i++){
-            if (candidatesArray[i].addr==_address){
-                Vote memory v = Vote({
-                    addr: msg.sender
-                });
-                candidates[_address].push(v);
-                return true;
-            }
+    modifier RegistrationPhase (){
+        require(registrationPhase==true,"Registration phase is not open");
+        _;
+    }
+
+    modifier VotingPhase(){
+        require(votingPhase==true, "Voting phase not open");
+        _;
+    }
+
+    function CastPresident(address _address) VotingPhase public returns(bool){
+        string memory president = "president";
+        if (!voters[msg.sender].votedPresident && keccak256(abi.encodePacked(candidate[_address].position)) == keccak256(abi.encodePacked(president))){
+            presidentVotes.push(msg.sender);
+            candidate[_address].votes+=1;
+            voters[msg.sender].votedPresident=true;
+            return true;
         }
         return false;
     }
 
-    function RegisterCandidate(address _address, string memory _name) onlyAdmin public returns(bool){
-        candidates[_address].push();
-        candidates[_address].pop();
-        
-        Candidate memory newCandidate = Candidate({
-            name: _name,
-            addr: _address
-        });
-        candidatesArray.push(newCandidate);
-        return true;
+    function CastGovernor(address _address) VotingPhase public returns (bool){
+        string memory governor = "gorvenor";
+        if (!voters[msg.sender].votedGovernor && keccak256(abi.encodePacked(candidate[_address].position)) == keccak256(abi.encodePacked(governor))){
+            governorVotes.push(msg.sender);
+            candidate[_address].votes+=1;
+            voters[msg.sender].votedGovernor=true;
+            return true;
+        }
+        return false;
     }
 
-
-
-
-    function AddVoter (address _address) onlyAdmin public returns (bool){
-        voters[_address]=count;
-        votersArray.push(Voter(_address));
-        count++;
-        return true;
+    function RegisterCandidate(address _address, string memory _name, string memory position) RegistrationPhase onlyAdmin public returns(bool){
+        string memory president = "president";
+        string memory governor = "governor";
+        if (keccak256(abi.encodePacked(position)) == keccak256(abi.encodePacked(president))){
+            for (uint i=0; i<presidentCandidates.length; i++){
+                if (presidentCandidates[i].addr==_address){
+                    return false;
+                }
+            }
+            Candidate memory newCandidate = Candidate({name: _name, addr: _address,votes: 0, position:position});
+            presidentCandidates.push(newCandidate);
+            return true;
+        }
+        if (keccak256(abi.encodePacked(position)) == keccak256(abi.encodePacked(governor))){
+            for (uint i=0; i<governorCandidates.length; i++){
+                if (governorCandidates[i].addr==_address){
+                    return false;
+                }
+            }
+            Candidate memory newCandidate = Candidate({name: _name, addr: _address, votes: 0, position: position});
+            governorCandidates.push(newCandidate);
+            return true;
+        }
+        return false;
     }
 
-    function SeeCandidateVotes(address _address) public view returns (Vote[] memory){
-        return candidates[_address];
+    function RegisterVoter (address _address) RegistrationPhase onlyAdmin public returns (bool){
+       Voter memory voter = Voter({
+           voter:_address,
+           votedPresident: false,
+           votedGovernor: false,
+           president: address(0),
+           governor: address(0),
+           registered: true               
+       });
+       if (!voters[_address].registered){
+           voters[_address]=voter;
+           allVoters.push(voter);
+       }else{
+           return false;
+       }
+       return true;
     }
 
-    function GetCandidates () public view returns (Candidate[] memory){
-        return candidatesArray;
+    function GetAllVoters() public view returns(Voter[] memory){
+        return allVoters;
     }
 
-    function GetVoters() public view returns(Voter[] memory){
-        return votersArray;
+    function GetGovernorCandidates() public view returns(Candidate[] memory){
+        return governorCandidates;
     }
 
-    function TotalNumberOfVoter() public view returns(uint){
-        return votersArray.length;
+    function GetPresidentCandidates() public view returns (Candidate[] memory){
+        return presidentCandidates;
+    }
+
+    function GetCandidateVotes(address _address) public view returns (uint){
+        return candidate[_address].votes;
+    }
+
+    function ChangeRegistrationPhase() public onlyAdmin {
+        registrationPhase=!registrationPhase;
+    }
+
+    function ChangeVotingPhase() public onlyAdmin{
+        votingPhase=!votingPhase;
+    }
+
+    function GetRegisrationPhase() public view returns(bool){
+        return registrationPhase;
+    }
+
+    function GetVotingPhase() public view returns (bool){
+        return votingPhase;
     }
 
 }

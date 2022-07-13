@@ -1,1 +1,0 @@
-when GenerateKeyStore(password) is called, keystore files will be saved in this directory
