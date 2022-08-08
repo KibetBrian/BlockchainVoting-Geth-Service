@@ -36,7 +36,7 @@ func main (){
 	address, transaction, election, err := election.DeployElection(auth,client)
 
 	if err != nil{
-		log.Fatalf("Failde to deploy the contract: %v\n", err)
+		log.Fatalf("Failed to deploy the contract: %v\n", err)
 	}
 	log.Println("Contract Address: ",address)
 	log.Println("Contact Transaction: ",transaction)
