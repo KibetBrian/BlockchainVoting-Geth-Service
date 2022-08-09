@@ -7,6 +7,7 @@ import (
 	"github.com/KibetBrian/geth/election"
 	"github.com/KibetBrian/geth/utils"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 
@@ -42,7 +43,7 @@ func RegisterVoter(address string) TransactionResult {
 	return res
 }
 
-func ChangeVotingPhase(){
+func ChangeVotingPhase() *types.Transaction{
 	Refresh();
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
@@ -61,27 +62,23 @@ func ChangeVotingPhase(){
 
 	transaction, err := election.ChangeVotingPhase(tx)
 	if err != nil {
-		log.Fatalf("Failed to change registration phase: %v", err);
+		log.Fatalf("Failed to change voting phase: %v", err);
 	}
-	log.Println("Registration phase changed", transaction)
-
+	log.Println("Voting phase changed", transaction)
+	return transaction
 }
-
-
-
-
 
 func GetVotingPhase() bool{
 	Refresh();
-	
+
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
 		log.Fatalf("Failed to create election instance: %v\n", err)
 	}
-	state, err := election.GetRegisrationPhase((&bind.CallOpts{From: wallet.PublicAddress, Context: ctx}))
-	if err != nil {
-		log.Fatalf("Failed to get election phase: %v", err)
-	}
 
+	state, err := election.GetVotingPhase((&bind.CallOpts{From: wallet.PublicAddress, Context: ctx}));		
+	if err != nil {
+		log.Fatalf("Failed to get voting phase: %v\n", err)
+	}
 	return state;
 }
