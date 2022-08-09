@@ -1,6 +1,9 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	cors "github.com/rs/cors/wrapper/gin"
+)
 
 
 func NewServer () *Server{
@@ -8,6 +11,9 @@ func NewServer () *Server{
 	server := Server{
 		router: gin.Default(),
 	}
+	//cors
+	server.router.Use(cors.Default())
+
 
 	server.router.GET("/", server.SayHello)
 	server.router.GET("/voter/all", server.GetVoters)
