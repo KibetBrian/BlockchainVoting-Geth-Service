@@ -80,7 +80,6 @@ func ChangeRegistrationPhase() *types.Transaction{
 	if err != nil {
 		log.Fatalf("Failed to change registration phase: %v", err);
 	}
-	
 	return transaction;
 }
 
