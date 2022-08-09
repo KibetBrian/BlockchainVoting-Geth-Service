@@ -22,8 +22,6 @@ contract Election{
 
     struct Voter {
         address voter;
-        address president;
-        address governor;
         bool votedPresident;
         bool votedGovernor;
         bool registered;
@@ -59,7 +57,7 @@ contract Election{
         string memory president = "president";
         if (!voters[msg.sender].votedPresident && keccak256(abi.encodePacked(candidate[_address].position)) == keccak256(abi.encodePacked(president))){
             presidentVotes.push(msg.sender);
-            candidate[_address].votes+=1;
+            candidate[_address].votes++;
             voters[msg.sender].votedPresident=true;
             return true;
         }
@@ -87,6 +85,7 @@ contract Election{
                 }
             }
             Candidate memory newCandidate = Candidate({name: _name, addr: _address,votes: 0, position:position});
+            candidate[_address]=newCandidate;
             presidentCandidates.push(newCandidate);
             return true;
         }
@@ -97,6 +96,7 @@ contract Election{
                 }
             }
             Candidate memory newCandidate = Candidate({name: _name, addr: _address, votes: 0, position: position});
+            candidate[_address]=newCandidate;
             governorCandidates.push(newCandidate);
             return true;
         }
@@ -108,8 +108,6 @@ contract Election{
            voter:_address,
            votedPresident: false,
            votedGovernor: false,
-           president: address(0),
-           governor: address(0),
            registered: true               
        });
        if (!voters[_address].registered){
@@ -137,12 +135,27 @@ contract Election{
         return candidate[_address].votes;
     }
 
-    function ChangeRegistrationPhase() public onlyAdmin {
+    function ChangeRegistrationPhase() public onlyAdmin returns(bool) {
         registrationPhase=!registrationPhase;
+        return registrationPhase;
     }
 
-    function ChangeVotingPhase() public onlyAdmin{
+    function GetPresidentialVotes() public view returns(address[] memory){
+        return presidentVotes;
+    }
+
+     function GetGubernatorial() public view returns(address[] memory){
+        return governorVotes;
+    }
+
+    function GetSpecificCandidate(address _addr) public view returns (Candidate memory){
+        return candidate[_addr];
+    }
+
+
+    function ChangeVotingPhase() public onlyAdmin returns(bool){
         votingPhase=!votingPhase;
+        return votingPhase;
     }
 
     function GetRegisrationPhase() public view returns(bool){
