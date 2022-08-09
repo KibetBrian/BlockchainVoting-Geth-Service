@@ -10,7 +10,6 @@ import (
 
 func (s *Server) SayHello(c *gin.Context){
 	c.JSON(http.StatusOK, gin.H{"Message":"Hello there!"})
-	return
 }
 
 func (s *Server) RegisterVoter(c *gin.Context){
@@ -79,30 +78,25 @@ func (s *Server) RegisterCandidate(c *gin.Context){
 func (s *Server) GetVoters(c *gin.Context){
 	voters := admin.GetVoters()
 	c.JSON(http.StatusOK, gin.H{"Voters": voters})
-	return
 }
 
 func (s *Server) GetGorvernorCandidates(c *gin.Context){
 	candidates := admin.GetGorvernorCandidates();
 	c.JSON(http.StatusOK, gin.H{"Candidates": candidates})
-	return
 }
 func (s *Server) GetPresedentialCandidates(c *gin.Context){
 	candidates := admin.GetPresidentCandidates();
 	c.JSON(http.StatusOK, gin.H{"Candidates": candidates})
-	return
 }
 
 func (s *Server) ChangeRegistrationPhase(c *gin.Context){
 	tx := admin.ChangeRegistrationPhase();
 	c.JSON(http.StatusOK, gin.H{"message": "registration phase changed","Transaction":tx });
-	return;
 }
 
 func (s *Server) ChangeVotingPhase(c *gin.Context){
-	admin.ChangeVotingPhase();
-	c.JSON(http.StatusOK, gin.H{"message": "voting phase changed"});
-	return;
+	tx := admin.ChangeVotingPhase();
+	c.JSON(http.StatusOK, gin.H{"message": "voting phase changed", "Transaction": tx});
 }
 
 func (s *Server) GetVotingPhase(c *gin.Context){
@@ -112,6 +106,6 @@ func (s *Server) GetVotingPhase(c *gin.Context){
 
 func (s *Server) GetRegisrationPhase(c *gin.Context){
 	state := admin.GetRegistrationPhase();
-	c.JSON(http.StatusOK, gin.H{"RegistrationPhase": state})
+	c.JSON(http.StatusOK, gin.H{"registrationPhase": state})
 }
 
