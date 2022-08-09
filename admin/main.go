@@ -22,7 +22,7 @@ var nonce = utils.GetPendingNonce(client, ctx, wallet.PublicAddress)
 
 var gasPrice = utils.SuggestGasPrice(client, ctx)
 
-var contractAddress = utils.StringToAddress("0x9f9B7Ca6703901a17454Ea2DD3Af98B107d472D8")
+var contractAddress = utils.StringToAddress("0xcbF73404D5c90994A6Fb0107405263892F4b6d29")
 
 const Admin = "brian"
 
@@ -38,32 +38,6 @@ func Refresh() {
 	nonce = utils.GetPendingNonce(client, ctx, wallet.PublicAddress)
 	gasPrice = utils.SuggestGasPrice(client, ctx)
 
-	contractAddress = utils.StringToAddress("0x3311797f5BE82be3550dd3d22BF1AC76A6118C4F")
-}
-
-func main() {
-
-	election, err := election.NewElection(contractAddress, client)
-	if err != nil {
-		log.Fatalf("Failed to create election instance: %v\n", err)
-	}
-
-	//Transaction signer
-	tx, err := bind.NewKeyedTransactorWithChainID(wallet.PrivateKey, netId)
-	if err != nil {
-		log.Fatalf("Failed to create Transaction Signer: %v\n", err)
-	}
-	tx.GasLimit = 3000000
-	tx.GasPrice = gasPrice
-	tx.Nonce = big.NewInt(int64(nonce))
-
-	//Transactor
-	voterAddress := utils.StringToAddress("c50cd042edf5cf1d31cd5f9f04b499acd7e33a67")
-	transaction, err := election.RegisterVoter(tx, voterAddress)
-	if err != nil {
-		log.Fatalf("Failed to add voter: %v", err)
-	}
-	log.Println("Transaction: ", transaction)
 }
 
 func GetVoters() []election.ElectionVoter {
@@ -73,7 +47,7 @@ func GetVoters() []election.ElectionVoter {
 	if err != nil {
 		log.Fatalf("Failed to create election instance: %v\n", err)
 	}
-	
+
 	//Caller
 	voters, err := election.GetAllVoters(&bind.CallOpts{From: wallet.PublicAddress, Context: ctx})
 	if err != nil {
@@ -87,4 +61,3 @@ type TransactionResult struct {
 	TransactionCost *big.Int
 	Success         bool
 }
-
