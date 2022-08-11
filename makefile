@@ -9,7 +9,7 @@ compile:
 
 #Generate golang code from the abi
 abigengo:
-	abigen --bin=./build/Election.bin --abi ./build/Election.abi --pkg=election --out=election/Election.go
+	abigen --abi ./build/Election.abi --pkg election --out=election/Election.go --bin ./build/Election.bin
 
 #Deploy contract to the network
 deploy:
