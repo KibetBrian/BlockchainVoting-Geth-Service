@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/KibetBrian/geth/admin"
+	"github.com/KibetBrian/geth/election"
 	"github.com/gin-gonic/gin"
 )
 
@@ -80,6 +81,11 @@ func (s *Server) GetVoters(c *gin.Context){
 	c.JSON(http.StatusOK, gin.H{"Voters": voters})
 }
 
+func (s *Server)GetSpecificCandidate(c *gin.Context){
+	candidate := admin.GetSpecificCandidate("0xd67edd183254c4e1274b31a7f01b4de859a4db0d")
+	c.JSON(http.StatusOK, gin.H{"Candidate": candidate})
+}
+
 func (s *Server) GetGorvernorCandidates(c *gin.Context){
 	candidates := admin.GetGorvernorCandidates();
 	c.JSON(http.StatusOK, gin.H{"Candidates": candidates})
@@ -108,4 +114,27 @@ func (s *Server) GetRegisrationPhase(c *gin.Context){
 	state := admin.GetRegistrationPhase();
 	c.JSON(http.StatusOK, gin.H{"registrationPhase": state})
 }
+
+type Addresses struct{
+	Addresses []string `json:"candidatesAddresses"`
+}
+
+//Process
+func (s *Server)GetProcessedResults(c *gin.Context){
+	var addresses Addresses;
+	err := c.ShouldBindJSON(&addresses);
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "bad request")
+	}
+
+	candidates := []election.ElectionCandidate{}
+
+	//Get individual candidate data
+	for _, v := range addresses.Addresses{
+		candidate := admin.GetSpecificCandidate(v)
+		candidates = append(candidates, candidate)		
+	}
+	c.JSON(http.StatusOK, candidates)
+}
+
 
