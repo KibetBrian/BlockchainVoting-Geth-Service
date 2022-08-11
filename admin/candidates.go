@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/KibetBrian/geth/election"
+	"github.com/KibetBrian/geth/utils"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
@@ -35,5 +36,16 @@ func GetPresidentCandidates() []election.ElectionCandidate{
 	}
 	
 	return presidentCandidates;
+}
+
+func GetSpecificCandidate(address string) election.ElectionCandidate{
+	Refresh();
+	addr := utils.StringToAddress(address)
+	election, err := election.NewElection(contractAddress, client)
+	if err != nil {
+		log.Fatalf("Failed to create election instance: %v\n", err)
+	}
+	candidate, err := election.GetSpecificCandidate((&bind.CallOpts{From: wallet.PublicAddress, Context: ctx}), addr)
+	return candidate
 }
 
