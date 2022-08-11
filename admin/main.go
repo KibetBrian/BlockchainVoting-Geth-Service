@@ -22,7 +22,7 @@ var nonce = utils.GetPendingNonce(client, ctx, wallet.PublicAddress)
 
 var gasPrice = utils.SuggestGasPrice(client, ctx)
 
-var contractAddress = utils.StringToAddress("0xcbF73404D5c90994A6Fb0107405263892F4b6d29")
+var contractAddress = utils.StringToAddress("0xd0F0af13462445A9053C88a512Acb27f9fB6BFB8")
 
 const Admin = "brian"
 
