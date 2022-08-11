@@ -25,6 +25,8 @@ func NewServer () *Server{
 	server.router.GET("/registration_phase", server.GetRegisrationPhase)
 	server.router.GET("/voting_phase", server.GetVotingPhase)
 	server.router.GET("/candidates/presidential", server.GetPresedentialCandidates)
+	server.router.GET("/candidates/specific", server.GetSpecificCandidate)
+	server.router.POST("/candidates/process", server.GetProcessedResults)
 	
 	return &server
 }
