@@ -14,11 +14,11 @@ type Wallet struct {
 }
 
 func CreateWallet() *Wallet {
-	//Create private key
 	privateKey, err := crypto.GenerateKey()
 	if err != nil {
 		log.Printf("Failed to generate private key. Err: %v", privateKey)
 	}
+
 	privateKeyBytes := crypto.FromECDSA(privateKey)
 	privateKeyHexAddressString := hexutil.Encode(privateKeyBytes)
 
@@ -37,5 +37,6 @@ func CreateWallet() *Wallet {
 		PublicKey:     publicKeyAddressString,
 		PublicAddress: publicAddressString,
 	}
+	
 	return newWallet
 }

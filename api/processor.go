@@ -5,7 +5,7 @@ import (
 	"github.com/KibetBrian/geth/utils"
 )
 
-//Checks if voters is already registered on the blockchain
+//Checks if a voter is already registered on the blockchain
 func VoterRegistered ( voters []election.ElectionVoter, address string) bool {
 	addr := utils.StringToAddress(address)
 
@@ -14,10 +14,11 @@ func VoterRegistered ( voters []election.ElectionVoter, address string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 
-//Checks if candidate is already registered in the database
+//Checks if a candidate is already registered in the database
 func CandidateRegistered (p, g []election.ElectionCandidate, address string) bool{
 	addr := utils.StringToAddress(address)
 
@@ -26,10 +27,12 @@ func CandidateRegistered (p, g []election.ElectionCandidate, address string) boo
 			return true
 		}
 	}
+
 	for _, v := range g {
 		if v.Addr==addr{
 			return true
 		}
 	}
+
 	return false
 }

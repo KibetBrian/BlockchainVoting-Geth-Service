@@ -23,12 +23,12 @@ func GetRegistrationPhase() bool{
 	if err != nil {
 		log.Fatalf("Failed to get regisration phase: %v\n", err)
 	}
+
 	return state;
 }
 
 func RegisterCandidate(address, name, position string) TransactionResult {
 	Refresh()
-
 
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
@@ -51,16 +51,19 @@ func RegisterCandidate(address, name, position string) TransactionResult {
 	if err != nil {
 		log.Fatalf("Failed to add voter: %v", err)
 	}
+
 	res := TransactionResult{
 		TransactionHash: transaction.Hash(),
 		TransactionCost: transaction.Cost(),
 		Success: true,
 	}
+
 	return res
 }
 
 func ChangeRegistrationPhase() *types.Transaction{
 	Refresh();
+
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
 		log.Fatalf("Failed to create election instance: %v\n", err)
@@ -80,6 +83,7 @@ func ChangeRegistrationPhase() *types.Transaction{
 	if err != nil {
 		log.Fatalf("Failed to change registration phase: %v", err);
 	}
+	
 	return transaction;
 }
 

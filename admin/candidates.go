@@ -8,7 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-func GetGorvernorCandidates() []election.ElectionCandidate {
+func GetGubenatorial() []election.ElectionCandidate {
 	Refresh()
 
 	election, err := election.NewElection(contractAddress, client)
@@ -20,11 +20,13 @@ func GetGorvernorCandidates() []election.ElectionCandidate {
 	if err != nil {
 		log.Fatalf("Failed to retrieve candidates from the blockchain. Error : %v\n", err)
 	}
+
 	return gorvenorCandidates;
 }
 
 func GetPresidentCandidates() []election.ElectionCandidate{
 	Refresh();
+
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
 		log.Fatalf("Failed to create election instance: %v\n", err)
@@ -40,12 +42,16 @@ func GetPresidentCandidates() []election.ElectionCandidate{
 
 func GetSpecificCandidate(address string) election.ElectionCandidate{
 	Refresh();
+
 	addr := utils.StringToAddress(address)
+
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
 		log.Fatalf("Failed to create election instance: %v\n", err)
 	}
+
 	candidate, err := election.GetSpecificCandidate((&bind.CallOpts{From: wallet.PublicAddress, Context: ctx}), addr)
+	
 	return candidate
 }
 

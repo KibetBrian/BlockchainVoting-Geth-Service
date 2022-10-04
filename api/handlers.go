@@ -14,7 +14,6 @@ func (s *Server) SayHello(c *gin.Context){
 }
 
 func (s *Server) RegisterVoter(c *gin.Context){
-
 	var req AddVoterRequest
 
 	err := c.ShouldBindJSON(&req)
@@ -47,19 +46,21 @@ func (s *Server) RegisterVoter(c *gin.Context){
 
 func (s *Server) RegisterCandidate(c *gin.Context){
 	var req AddContestantRequest
+
 	err := c.ShouldBindJSON(&req)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message":"Invalid json format"})
 		return
 	}
+
 	registrationPhase := admin.GetRegistrationPhase();
 	if !registrationPhase{
 		c.JSON(http.StatusNotAcceptable, gin.H{"message": "registration phase not active"})
 		return;
 	}
 
-	presidentialCandidates := admin.GetGorvernorCandidates();
-	gubernitorialGandidates := admin.GetGorvernorCandidates();
+	presidentialCandidates := admin.GetGubenatorial();
+	gubernitorialGandidates := admin.GetGubenatorial();
 	
 	isRegistered  := CandidateRegistered(presidentialCandidates, gubernitorialGandidates,req.CandidatesAddress)
 	if isRegistered{
@@ -78,40 +79,48 @@ func (s *Server) RegisterCandidate(c *gin.Context){
 
 func (s *Server) GetVoters(c *gin.Context){
 	voters := admin.GetVoters()
+
 	c.JSON(http.StatusOK, gin.H{"Voters": voters})
 }
 
 func (s *Server)GetSpecificCandidate(c *gin.Context){
 	candidate := admin.GetSpecificCandidate("0xd67edd183254c4e1274b31a7f01b4de859a4db0d")
+
 	c.JSON(http.StatusOK, gin.H{"Candidate": candidate})
 }
 
-func (s *Server) GetGorvernorCandidates(c *gin.Context){
-	candidates := admin.GetGorvernorCandidates();
+func (s *Server) GetGubenatorialCandidates(c *gin.Context){
+	candidates := admin.GetGubenatorial();
+
 	c.JSON(http.StatusOK, gin.H{"Candidates": candidates})
 }
 func (s *Server) GetPresedentialCandidates(c *gin.Context){
 	candidates := admin.GetPresidentCandidates();
+
 	c.JSON(http.StatusOK, gin.H{"Candidates": candidates})
 }
 
 func (s *Server) ChangeRegistrationPhase(c *gin.Context){
 	tx := admin.ChangeRegistrationPhase();
+
 	c.JSON(http.StatusOK, gin.H{"message": "registration phase changed","Transaction":tx });
 }
 
 func (s *Server) ChangeVotingPhase(c *gin.Context){
 	tx := admin.ChangeVotingPhase();
+
 	c.JSON(http.StatusOK, gin.H{"message": "voting phase changed", "Transaction": tx});
 }
 
 func (s *Server) GetVotingPhase(c *gin.Context){
 	state := admin.GetVotingPhase();
+
 	c.JSON(http.StatusOK, gin.H{"votingPhase": state})
 }
 
 func (s *Server) GetRegisrationPhase(c *gin.Context){
 	state := admin.GetRegistrationPhase();
+	
 	c.JSON(http.StatusOK, gin.H{"registrationPhase": state})
 }
 
@@ -135,6 +144,18 @@ func (s *Server)GetProcessedResults(c *gin.Context){
 		candidates = append(candidates, candidate)		
 	}
 	c.JSON(http.StatusOK, candidates)
+}
+
+//To persist
+var ResultsPhase = false;
+
+func (s *Server)GetResultsPhase(c *gin.Context){
+	c.JSON(http.StatusAccepted, gin.H{"resultsPhase": ResultsPhase})
+}
+
+func (s *Server) ChangeResultsPhase (c *gin.Context){
+	ResultsPhase = !ResultsPhase
+	c.JSON(http.StatusAccepted, gin.H{"message": "Results Phase Changed"})
 }
 
 

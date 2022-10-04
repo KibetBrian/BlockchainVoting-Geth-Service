@@ -12,6 +12,12 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
+type TransactionResult struct {
+	TransactionHash common.Hash
+	TransactionCost *big.Int
+	Success         bool
+}
+
 var wallet = core.DecryptKeystore(os.Getenv("wallet1passphrase"), 1)
 
 var client, ctx = core.Connect()
@@ -36,8 +42,8 @@ func Refresh() {
 	netId = utils.GetNetworkId(client, ctx)
 
 	nonce = utils.GetPendingNonce(client, ctx, wallet.PublicAddress)
-	gasPrice = utils.SuggestGasPrice(client, ctx)
 
+	gasPrice = utils.SuggestGasPrice(client, ctx)
 }
 
 func GetVoters() []election.ElectionVoter {
@@ -53,11 +59,7 @@ func GetVoters() []election.ElectionVoter {
 	if err != nil {
 		log.Printf("Failed to get voters. Err: %v\n", err)
 	}
+
 	return voters
 }
 
-type TransactionResult struct {
-	TransactionHash common.Hash
-	TransactionCost *big.Int
-	Success         bool
-}

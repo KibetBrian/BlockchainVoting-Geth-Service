@@ -14,7 +14,6 @@ import (
 func RegisterVoter(address string) TransactionResult {
 	Refresh()
 
-	
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
 		log.Fatalf("Failed to create election instance: %v\n", err)
@@ -31,20 +30,24 @@ func RegisterVoter(address string) TransactionResult {
 
 	//Transactor
 	voterAddress := utils.StringToAddress(address)
+
 	transaction, err := election.RegisterVoter(tx, voterAddress)
 	if err != nil {
 		log.Fatalf("Failed to add voter: %v", err)
 	}
+
 	res := TransactionResult{
 		TransactionHash: transaction.Hash(),
 		TransactionCost: transaction.Cost(),
 		Success: true,
 	}
+
 	return res
 }
 
 func ChangeVotingPhase() *types.Transaction{
 	Refresh();
+
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
 		log.Fatalf("Failed to create election instance: %v\n", err)
@@ -65,6 +68,7 @@ func ChangeVotingPhase() *types.Transaction{
 		log.Fatalf("Failed to change voting phase: %v", err);
 	}
 	log.Println("Voting phase changed", transaction)
+
 	return transaction
 }
 
@@ -73,12 +77,13 @@ func GetVotingPhase() bool{
 
 	election, err := election.NewElection(contractAddress, client)
 	if err != nil {
-		log.Fatalf("Failed to create election instance: %v\n", err)
+		log.Printf("Failed to create election instance: %v\n", err)
 	}
 
 	state, err := election.GetVotingPhase((&bind.CallOpts{From: wallet.PublicAddress, Context: ctx}));		
 	if err != nil {
 		log.Fatalf("Failed to get voting phase: %v\n", err)
 	}
+
 	return state;
 }

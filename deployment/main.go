@@ -28,6 +28,7 @@ func main (){
 	if err != nil {
 		log.Fatalf("Failed to create transaction signer: %v\n", err)
 	}
+
 	auth.Nonce=big.NewInt(int64(nonce))
 	auth.Value=big.NewInt(0)
 	auth.GasLimit=uint64(3000000)
@@ -38,6 +39,7 @@ func main (){
 	if err != nil{
 		log.Fatalf("Failed to deploy the contract: %v\n", err)
 	}
+	
 	log.Println("Contract Address: ",address)
 	log.Println("Contact Transaction: ",transaction)
 	log.Println("Contract Election: ",election)

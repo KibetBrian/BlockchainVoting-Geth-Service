@@ -26,11 +26,12 @@ func Connect() (*ethclient.Client, context.Context) {
 	return client, ctx
 }
 
-//This function gets the balance at a particular address
+//Get balance on the address
 func GetBalance(address string) *big.Float {
 	client, ctx := Connect()
 
 	addr := common.HexToAddress(address)
+
 	balanceInWei, err := client.BalanceAt(ctx, addr, nil)
 	if err != nil {
 		log.Printf("Failed to get balance: Err: %v\n", err)
@@ -40,7 +41,7 @@ func GetBalance(address string) *big.Float {
 	return balanceInEther
 }
 
-//This function transfers ethers from wallet to address provided
+//Sends ether from to another addres
 func TranferEther(addrTo string, amount float64, password string) {
 	client, ctx := Connect()
 	Key := DecryptKeystore(password, 1)
@@ -77,5 +78,6 @@ func TranferEther(addrTo string, amount float64, password string) {
 	if err != nil {
 		log.Fatalf("Failed to send transaction to the pending pool of execution. Err: %v\n", err)
 	}
+	
 	log.Println("Tx Completed.", tx.Hash().Hex())
 }
